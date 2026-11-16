@@ -90,8 +90,9 @@ program açıkken ya da dizüstünde güç tasarrufu planı etkinken fark yarat�
 
 ### Kolay yol: PwRHub.exe
 
-`PwRHub.exe` tek dosyadır; kurulum gerektirmez, Python gerektirmez. İstediğin
-bir klasöre koyup çift tıkla.
+[Releases](https://github.com/BagwelPower/PwR-Hub/releases/latest) sayfasından
+`PwRHub.exe` dosyasını indir. Tek dosyadır; kurulum gerektirmez, Python
+gerektirmez. İstediğin bir klasöre koyup çift tıkla.
 
 - **İlk açılışta Windows uyarı gösterebilir** ("Windows kişisel bilgisayarınızı
   korudu"). Dosya dijital olarak imzalı olmadığı için bu olağandır:
@@ -134,10 +135,10 @@ Windows'ta proje klasöründe:
 build.bat
 ```
 
-Çıktı `dist\PwRHub.exe` olur. Proje GitHub'a yüklenirse
-`.github/workflows/build.yml` her gönderimde testleri çalıştırır ve `.exe`
-dosyasını kendiliğinden üretir (ilgili çalıştırmanın "Artifacts" bölümünden
-indirilir).
+Çıktı `dist\PwRHub.exe` olur. GitHub'daki iş akışı
+(`.github/workflows/build.yml`) her gönderimde testleri gerçek Windows üzerinde
+çalıştırır ve `.exe` dosyasını üretir. `v` ile başlayan bir etiket
+gönderildiğinde (ör. `v0.1.0`) dosya kendiliğinden Releases sayfasına eklenir.
 
 ## Kullanım
 

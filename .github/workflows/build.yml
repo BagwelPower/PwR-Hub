@@ -1,11 +1,17 @@
 # Her gönderimde testleri çalıştırır ve Windows için tek dosyalık PwRHub.exe üretir.
 # Üretilen dosya, GitHub'da ilgili çalıştırmanın "Artifacts" bölümünden indirilir.
+#
+# Yeni sürüm yayınlamak için "v" ile başlayan bir etiket gönderin (ör. v0.1.0):
+# PwRHub.exe kendiliğinden deponun "Releases" bölümüne eklenir.
 name: Derle ve sına
 
 on:
   push:
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: write   # Releases bölümüne dosya ekleyebilmek için
 
 jobs:
   windows:
@@ -39,3 +45,12 @@ jobs:
           Write-Host "--- pwrhub.log ---"
           Get-Content "$env:PWRHUB_DATA_DIR\pwrhub.log" -ErrorAction SilentlyContinue
           exit $p.ExitCode
+      - name: Sürümü yayınla
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" dist\PwRHub.exe `
+            --title "PwR Hub ${{ github.ref_name }}" `
+            --notes-file docs\surum-notu.md
