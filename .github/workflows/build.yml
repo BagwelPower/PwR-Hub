@@ -1,0 +1,33 @@
+# Her gönderimde testleri çalıştırır ve Windows için tek dosyalık PwRHub.exe üretir.
+# Üretilen dosya, GitHub'da ilgili çalıştırmanın "Artifacts" bölümünden indirilir.
+name: Derle ve sına
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Bağımlılıkları kur
+        run: python -m pip install -r requirements-dev.txt pyinstaller
+      - name: Testler
+        run: python -m pytest
+        env:
+          QT_QPA_PLATFORM: offscreen
+      - name: PwRHub.exe derle
+        run: python -m PyInstaller --noconfirm --clean pwrhub.spec
+      - name: Derlenen dosya açılıp kapanabiliyor mu
+        run: Start-Process -FilePath dist\PwRHub.exe -ArgumentList "--selftest" -Wait -PassThru | ForEach-Object { if ($_.ExitCode -ne 0) { exit 1 } }
+        env:
+          PWRHUB_DATA_DIR: ${{ runner.temp }}\pwrhub-selftest
+      - uses: actions/upload-artifact@v4
+        with:
+          name: PwRHub-windows
+          path: dist/PwRHub.exe
