@@ -1,0 +1,11 @@
+*.db
+*.egg-info/
+*.pyc
+.pytest_cache/
+.venv/
+PwRHub.exe
+__pycache__/
+build/
+dist/
+pwr-hub.zip
+venv/
