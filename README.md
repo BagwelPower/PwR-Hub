@@ -137,8 +137,9 @@ build.bat
 
 Çıktı `dist\PwRHub.exe` olur. GitHub'daki iş akışı
 (`.github/workflows/build.yml`) her gönderimde testleri gerçek Windows üzerinde
-çalıştırır ve `.exe` dosyasını üretir. `v` ile başlayan bir etiket
-gönderildiğinde (ör. `v0.1.0`) dosya kendiliğinden Releases sayfasına eklenir.
+çalıştırır ve `.exe` dosyasını üretir. `pwrhub/__init__.py` içindeki sürüm
+numarası artırılıp `main` dalına gönderildiğinde dosya kendiliğinden Releases
+sayfasına eklenir.
 
 ## Kullanım
 

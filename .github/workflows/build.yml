@@ -1,8 +1,9 @@
 # Her gönderimde testleri çalıştırır ve Windows için tek dosyalık PwRHub.exe üretir.
 # Üretilen dosya, GitHub'da ilgili çalıştırmanın "Artifacts" bölümünden indirilir.
 #
-# Yeni sürüm yayınlamak için "v" ile başlayan bir etiket gönderin (ör. v0.1.0):
-# PwRHub.exe kendiliğinden deponun "Releases" bölümüne eklenir.
+# Yeni sürüm yayınlamak için pwrhub/__init__.py içindeki sürüm numarasını
+# artırıp main dalına gönderin: o numara için henüz yayın yoksa PwRHub.exe
+# kendiliğinden deponun "Releases" bölümüne eklenir.
 name: Derle ve sına
 
 on:
@@ -46,11 +47,14 @@ jobs:
           Get-Content "$env:PWRHUB_DATA_DIR\pwrhub.log" -ErrorAction SilentlyContinue
           exit $p.ExitCode
       - name: Sürümü yayınla
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ github.ref_name }}" dist\PwRHub.exe `
-            --title "PwR Hub ${{ github.ref_name }}" `
-            --notes-file docs\surum-notu.md
+          $version = python -c "import pwrhub; print(pwrhub.__version__)"
+          $tag = "v$version"
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) { Write-Host "$tag zaten yayınlanmış; atlanıyor."; exit 0 }
+          gh release create $tag dist\PwRHub.exe --target "${{ github.sha }}" `
+            --title "PwR Hub $tag" --notes-file docs\surum-notu.md
