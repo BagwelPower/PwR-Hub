@@ -23,11 +23,19 @@ jobs:
           QT_QPA_PLATFORM: offscreen
       - name: PwRHub.exe derle
         run: python -m PyInstaller --noconfirm --clean pwrhub.spec
-      - name: Derlenen dosya açılıp kapanabiliyor mu
-        run: Start-Process -FilePath dist\PwRHub.exe -ArgumentList "--selftest" -Wait -PassThru | ForEach-Object { if ($_.ExitCode -ne 0) { exit 1 } }
-        env:
-          PWRHUB_DATA_DIR: ${{ runner.temp }}\pwrhub-selftest
       - uses: actions/upload-artifact@v4
         with:
           name: PwRHub-windows
           path: dist/PwRHub.exe
+      - name: Derlenen dosya açılıp kapanabiliyor mu
+        shell: pwsh
+        env:
+          PWRHUB_DATA_DIR: ${{ runner.temp }}\pwrhub-selftest
+        run: |
+          $p = Start-Process -FilePath dist\PwRHub.exe -ArgumentList "--selftest" -PassThru
+          $null = $p.Handle   # çıkış kodu okunabilsin diye tutamacı sakla
+          if (-not $p.WaitForExit(120000)) { $p.Kill(); Write-Host "Zaman aşımı"; exit 1 }
+          Write-Host "Çıkış kodu: $($p.ExitCode)"
+          Write-Host "--- pwrhub.log ---"
+          Get-Content "$env:PWRHUB_DATA_DIR\pwrhub.log" -ErrorAction SilentlyContinue
+          exit $p.ExitCode
